@@ -17,6 +17,7 @@ function App() {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(cardInfo);
   const [copyFeedback, setCopyFeedback] = useState('');
+  const [showQRModal, setShowQRModal] = useState(false);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -101,6 +102,35 @@ END:VCARD`;
   return (
     <div className="min-h-screen min-w-screen w-full h-full bg-white flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
+        {/* QR Code Modal */}
+        {showQRModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-3xl p-8 shadow-2xl flex flex-col items-center max-w-lg w-full">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Scan to Save Contact</h2>
+              <div 
+                className="p-6 rounded-2xl bg-gray-50 mb-6"
+              >
+                <QRCode
+                  value={generateVCard()}
+                  size={280}
+                  level="H"
+                  includeMargin={true}
+                  renderAs="canvas"
+                />
+              </div>
+              <p className="text-center text-sm text-gray-600 mb-4">
+                Hold your camera steady and point at the QR code
+              </p>
+              <button
+                onClick={() => setShowQRModal(false)}
+                className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white font-500 rounded-lg transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Business Card */}
         <div className="w-full rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl sm:rounded-3xl"
           style={{
@@ -143,21 +173,21 @@ END:VCARD`;
             {/* QR Code Section - Top */}
             <div className="flex flex-col items-center mb-8">
               <div 
-                className="p-5 rounded-2xl transition-all duration-300 hover:shadow-lg cursor-pointer"
+                className="p-5 rounded-2xl transition-all duration-300 hover:shadow-lg cursor-pointer hover:scale-105"
                 style={{ backgroundColor: '#f5f5f7' }}
-                onClick={handleDownloadVCard}
-                title="Click to download contact"
+                onClick={() => setShowQRModal(true)}
+                title="Click to expand QR code"
               >
                 <QRCode
                   value={generateVCard()}
-                  size={140}
+                  size={160}
                   level="H"
                   includeMargin={true}
                   renderAs="canvas"
                 />
               </div>
               <p className="text-center text-xs text-gray-400 mt-4 font-400">
-                Scan or tap to save contact
+                Tap to expand • Scan to save contact
               </p>
               
               {/* Action Buttons */}
