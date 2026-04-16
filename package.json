@@ -2,7 +2,7 @@
   "name": "business-card-web-app",
   "private": true,
   "version": "0.0.1",
-  "homepage": "https://YOUR_USERNAME.github.io/YOUR_REPO_NAME",
+  "homepage": "https://tamdintdesign.github.io/business-card",
   "type": "module",
   "scripts": {
     "dev": "vite",
