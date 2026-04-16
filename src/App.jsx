@@ -10,7 +10,7 @@ function App() {
     title: 'Web Designer',
     email: 'mustapha@growth4u.co',
     phone: '+212 721176808',
-    website: 'https://www.tamdint.fr',
+    website: 'https://growth4u.co',
     profileColor: '#0A84FF', // Apple Blue
   });
 
@@ -234,8 +234,8 @@ END:VCARD`;
 
         {/* Footer */}
         <div className="mt-8 text-center space-y-2">
-          <p className="text-gray-400 text-sm font-400">Creative Connect</p>
-          <p className="text-gray-300 text-xs font-300">Developed with ❤️ by Mustapha Amraoui</p>
+          <p className="text-gray-400 text-sm font-400">Growth4u Connect</p>
+          <p className="text-gray-300 text-xs font-300">Developed with ❤️ by Growth4u</p>
         </div>
       </div>
     </div>
