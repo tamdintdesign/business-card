@@ -1,32 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode.react';
 import { Mail, Phone, Globe, Edit2, Check, X, Copy, Download, Share2 } from 'react-feather';
 import './App.css';
 
+const STORAGE_KEY = 'businessCardInfo';
+
 function App() {
   // Configuration - Update these with your information
-  const [cardInfo, setCardInfo] = useState({
+  const defaultCard = {
     name: 'Mustapha Amraoui',
     title: 'Web Designer',
     email: 'mustapha@growth4u.co',
     phone: '+212 721176808',
     website: 'https://growth4u.co',
     profileColor: '#0A84FF', // Apple Blue
+  };
+
+  const [cardInfo, setCardInfo] = useState(() => {
+    try {
+      const savedCard = window.localStorage.getItem(STORAGE_KEY);
+      return savedCard ? JSON.parse(savedCard) : defaultCard;
+    } catch (err) {
+      console.error('Failed to read saved card data', err);
+      return defaultCard;
+    }
   });
 
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(cardInfo);
   const [copyFeedback, setCopyFeedback] = useState('');
+  const [saveFeedback, setSaveFeedback] = useState('');
   const [showQRModal, setShowQRModal] = useState(false);
+
+  useEffect(() => {
+    setEditData(cardInfo);
+  }, [cardInfo]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cardInfo));
+    } catch (err) {
+      console.error('Failed to save card data', err);
+    }
+  }, [cardInfo]);
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditData(cardInfo);
+    setEditData({ ...cardInfo });
   };
 
   const handleSave = () => {
-    setCardInfo(editData);
+    setCardInfo((current) => ({ ...current, ...editData }));
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(editData));
     setIsEditing(false);
+    setSaveFeedback('Saved!');
+    setTimeout(() => setSaveFeedback(''), 2000);
   };
 
   const handleCancel = () => {
@@ -35,7 +63,7 @@ function App() {
   };
 
   const handleInputChange = (field, value) => {
-    setEditData({ ...editData, [field]: value });
+    setEditData((current) => ({ ...current, [field]: value }));
   };
 
   // Copy contact info to clipboard
@@ -144,6 +172,7 @@ END:VCARD`;
             <div className="flex justify-end mb-4">
               {!isEditing ? (
                 <button
+                  type="button"
                   onClick={handleEdit}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   title="Edit card"
@@ -153,18 +182,22 @@ END:VCARD`;
               ) : (
                 <div className="flex gap-2">
                   <button
+                    type="button"
                     onClick={handleSave}
-                    className="p-2 hover:bg-green-100 rounded-lg transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 bg-green-50 hover:bg-green-100 rounded-lg text-green-700 transition-colors"
                     title="Save changes"
                   >
-                    <Check size={18} className="text-green-500" />
+                    <Check size={18} />
+                    <span>Save</span>
                   </button>
                   <button
+                    type="button"
                     onClick={handleCancel}
-                    className="p-2 hover:bg-red-100 rounded-lg transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 bg-red-50 hover:bg-red-100 rounded-lg text-red-700 transition-colors"
                     title="Cancel editing"
                   >
-                    <X size={18} className="text-red-500" />
+                    <X size={18} />
+                    <span>Cancel</span>
                   </button>
                 </div>
               )}
@@ -193,6 +226,7 @@ END:VCARD`;
               {/* Action Buttons */}
               <div className="flex gap-3 mt-4 justify-center flex-wrap">
                 <button
+                  type="button"
                   onClick={handleCopyContact}
                   className="flex items-center gap-2 px-3 py-2 text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors"
                   title="Copy contact info"
@@ -201,6 +235,7 @@ END:VCARD`;
                   <span>Copy</span>
                 </button>
                 <button
+                  type="button"
                   onClick={handleDownloadVCard}
                   className="flex items-center gap-2 px-3 py-2 text-xs bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition-colors"
                   title="Download as vCard"
@@ -209,6 +244,7 @@ END:VCARD`;
                   <span>Download</span>
                 </button>
                 <button
+                  type="button"
                   onClick={handleShare}
                   className="flex items-center gap-2 px-3 py-2 text-xs bg-purple-50 hover:bg-purple-100 text-purple-600 rounded-lg transition-colors"
                   title="Share contact"
@@ -218,10 +254,10 @@ END:VCARD`;
                 </button>
               </div>
 
-              {/* Copy Feedback */}
-              {copyFeedback && (
+              {/* Save/Copy Feedback */}
+              {(copyFeedback || saveFeedback) && (
                 <p className="text-center text-xs text-green-600 mt-2 font-500">
-                  ✓ {copyFeedback}
+                  ✓ {copyFeedback || saveFeedback}
                 </p>
               )}
             </div>
