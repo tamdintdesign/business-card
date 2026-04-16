@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import QRCode from 'qrcode.react';
-import { Mail, Phone, Globe, Edit2, Check, X } from 'react-feather';
+import { Mail, Phone, Globe, Edit2, Check, X, Copy, Download, Share2 } from 'react-feather';
 import './App.css';
 
 function App() {
@@ -16,6 +16,7 @@ function App() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(cardInfo);
+  const [copyFeedback, setCopyFeedback] = useState('');
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -34,6 +35,54 @@ function App() {
 
   const handleInputChange = (field, value) => {
     setEditData({ ...editData, [field]: value });
+  };
+
+  // Copy contact info to clipboard
+  const handleCopyContact = async () => {
+    const contactText = `${cardInfo.name}\n${cardInfo.title}\n${cardInfo.email}\n${cardInfo.phone}\n${cardInfo.website}`;
+    try {
+      await navigator.clipboard.writeText(contactText);
+      setCopyFeedback('Copied to clipboard!');
+      setTimeout(() => setCopyFeedback(''), 2000);
+    } catch (err) {
+      setCopyFeedback('Failed to copy');
+    }
+  };
+
+  // Download vCard file
+  const handleDownloadVCard = () => {
+    const vcard = generateVCard();
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(vcard));
+    element.setAttribute('download', `${cardInfo.name.replace(/\s+/g, '_')}.vcf`);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  // Share contact
+  const handleShare = async () => {
+    const contactText = `Check out ${cardInfo.name}'s digital business card: ${window.location.href}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${cardInfo.name}'s Business Card`,
+          text: contactText,
+        });
+      } catch (err) {
+        console.log('Share cancelled');
+      }
+    } else {
+      // Fallback: copy share link
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopyFeedback('Link copied to clipboard!');
+        setTimeout(() => setCopyFeedback(''), 2000);
+      } catch (err) {
+        setCopyFeedback('Failed to copy link');
+      }
+    }
   };
 
   // Generate vCard format for QR code (includes all contact information)
@@ -94,8 +143,10 @@ END:VCARD`;
             {/* QR Code Section - Top */}
             <div className="flex flex-col items-center mb-8">
               <div 
-                className="p-5 rounded-2xl transition-all duration-300 hover:shadow-lg"
+                className="p-5 rounded-2xl transition-all duration-300 hover:shadow-lg cursor-pointer"
                 style={{ backgroundColor: '#f5f5f7' }}
+                onClick={handleDownloadVCard}
+                title="Click to download contact"
               >
                 <QRCode
                   value={generateVCard()}
@@ -106,8 +157,43 @@ END:VCARD`;
                 />
               </div>
               <p className="text-center text-xs text-gray-400 mt-4 font-400">
-                Tap to save contact
+                Scan or tap to save contact
               </p>
+              
+              {/* Action Buttons */}
+              <div className="flex gap-3 mt-4 justify-center flex-wrap">
+                <button
+                  onClick={handleCopyContact}
+                  className="flex items-center gap-2 px-3 py-2 text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors"
+                  title="Copy contact info"
+                >
+                  <Copy size={16} />
+                  <span>Copy</span>
+                </button>
+                <button
+                  onClick={handleDownloadVCard}
+                  className="flex items-center gap-2 px-3 py-2 text-xs bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition-colors"
+                  title="Download as vCard"
+                >
+                  <Download size={16} />
+                  <span>Download</span>
+                </button>
+                <button
+                  onClick={handleShare}
+                  className="flex items-center gap-2 px-3 py-2 text-xs bg-purple-50 hover:bg-purple-100 text-purple-600 rounded-lg transition-colors"
+                  title="Share contact"
+                >
+                  <Share2 size={16} />
+                  <span>Share</span>
+                </button>
+              </div>
+
+              {/* Copy Feedback */}
+              {copyFeedback && (
+                <p className="text-center text-xs text-green-600 mt-2 font-500">
+                  ✓ {copyFeedback}
+                </p>
+              )}
             </div>
 
             {/* Divider */}
