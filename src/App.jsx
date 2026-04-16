@@ -50,17 +50,17 @@ END:VCARD`;
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="min-h-screen min-w-screen w-full h-full bg-white flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         {/* Business Card */}
-        <div className="rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-2xl"
+        <div className="w-full rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl sm:rounded-3xl"
           style={{
             background: 'linear-gradient(135deg, #ffffff 0%, #f5f5f7 100%)',
             boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08)'
           }}
         >
           {/* Card Content */}
-          <div className="p-8">
+          <div className="p-6 sm:p-8">
             {/* Edit Button */}
             <div className="flex justify-end mb-4">
               {!isEditing ? (
