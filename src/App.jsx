@@ -8,10 +8,10 @@ const STORAGE_KEY = 'businessCardInfo';
 function App() {
   // Configuration - Update these with your information
   const defaultCard = {
-    name: 'Mustapha Amraoui',
-    title: 'Web Designer',
-    email: 'mustapha@growth4u.co',
-    phone: '+212 721176808',
+    name: 'Oumaima Essaid',
+    title: 'Traffic Manager',
+    email: 'oumaima@growth4u.co',
+    phone: '+212 624-089740',
     website: 'https://growth4u.co',
     profileColor: '#0A84FF', // Apple Blue
   };
