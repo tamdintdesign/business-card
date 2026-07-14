@@ -1,26 +1,31 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { DEFAULT_CARD, STORAGE_KEY } from '../constants/defaultCard';
+import {
+  DEFAULT_CARD,
+  STORAGE_KEY,
+  isProfileComplete,
+} from '../constants/defaultCard';
 
 function readStoredCard() {
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    return saved ? { ...DEFAULT_CARD, ...JSON.parse(saved) } : DEFAULT_CARD;
+    return saved ? { ...DEFAULT_CARD, ...JSON.parse(saved) } : { ...DEFAULT_CARD };
   } catch (err) {
     console.error('Failed to read saved card data', err);
-    return DEFAULT_CARD;
+    return { ...DEFAULT_CARD };
   }
 }
 
 export function useBusinessCard() {
   const [cardInfo, setCardInfo] = useState(readStoredCard);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState(cardInfo);
+  const [needsSetup, setNeedsSetup] = useState(() => !isProfileComplete(readStoredCard()));
   const [copyFeedback, setCopyFeedback] = useState('');
   const [saveFeedback, setSaveFeedback] = useState('');
   const [showQRModal, setShowQRModal] = useState(false);
   const feedbackTimeoutRef = useRef(null);
 
   useEffect(() => {
+    if (!isProfileComplete(cardInfo)) return;
+
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cardInfo));
     } catch (err) {
@@ -29,6 +34,11 @@ export function useBusinessCard() {
   }, [cardInfo]);
 
   useEffect(() => {
+    if (!cardInfo.name) {
+      document.title = 'Growth4u Connect';
+      return;
+    }
+
     document.title = `${cardInfo.name} | Business Card`;
     const meta = document.querySelector('meta[name="description"]');
     if (meta) {
@@ -58,25 +68,30 @@ export function useBusinessCard() {
     }, 2000);
   }, []);
 
-  const startEditing = useCallback(() => {
-    setEditData({ ...cardInfo });
-    setIsEditing(true);
-  }, [cardInfo]);
+  const saveProfile = useCallback(
+    (profile) => {
+      const next = { ...DEFAULT_CARD, ...cardInfo, ...profile };
+      setCardInfo(next);
+      setNeedsSetup(false);
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch (err) {
+        console.error('Failed to save card data', err);
+      }
+      showTemporaryFeedback(setSaveFeedback, 'Saved!');
+    },
+    [cardInfo, showTemporaryFeedback]
+  );
 
-  const saveEdits = useCallback(() => {
-    setCardInfo((current) => ({ ...current, ...editData }));
-    setIsEditing(false);
-    showTemporaryFeedback(setSaveFeedback, 'Saved!');
-  }, [editData, showTemporaryFeedback]);
-
-  const cancelEditing = useCallback(() => {
-    setIsEditing(false);
-    setEditData(cardInfo);
-  }, [cardInfo]);
-
-  const updateField = useCallback((field, value) => {
-    setEditData((current) => ({ ...current, [field]: value }));
+  const openSetup = useCallback(() => {
+    setNeedsSetup(true);
   }, []);
+
+  const closeSetup = useCallback(() => {
+    if (isProfileComplete(cardInfo)) {
+      setNeedsSetup(false);
+    }
+  }, [cardInfo]);
 
   const showCopyFeedback = useCallback(
     (message) => {
@@ -87,16 +102,14 @@ export function useBusinessCard() {
 
   return {
     cardInfo,
-    isEditing,
-    editData,
+    needsSetup,
     copyFeedback,
     saveFeedback,
     showQRModal,
     setShowQRModal,
-    startEditing,
-    saveEdits,
-    cancelEditing,
-    updateField,
+    saveProfile,
+    openSetup,
+    closeSetup,
     showCopyFeedback,
   };
 }

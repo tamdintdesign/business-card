@@ -4,6 +4,8 @@ const HOLD_MS = 1400;
 const FADE_MS = 500;
 
 function getInitials(name) {
+  if (!name?.trim()) return 'G4';
+
   return name
     .split(/\s+/)
     .filter(Boolean)
@@ -32,7 +34,7 @@ export function SplashScreen({ name, accentColor, onFinish }) {
       }`}
       role="status"
       aria-live="polite"
-      aria-label="Loading business card"
+      aria-label="Loading Growth4u Connect"
     >
       <div
         className="splash-mark mb-6 flex h-24 w-24 items-center justify-center rounded-3xl text-3xl font-bold tracking-tight text-white"
@@ -46,9 +48,15 @@ export function SplashScreen({ name, accentColor, onFinish }) {
       <p className="splash-brand text-lg font-semibold tracking-tight text-gray-900">
         Growth4u Connect
       </p>
-      <p className="splash-name mt-2 text-sm font-medium text-gray-400">
-        {name}
-      </p>
+      {name?.trim() ? (
+        <p className="splash-name mt-2 text-sm font-medium text-gray-400">
+          {name}
+        </p>
+      ) : (
+        <p className="splash-name mt-2 text-sm font-medium text-gray-400">
+          Digital business card
+        </p>
+      )}
 
       <div
         className="splash-bar mt-10 h-1 w-16 overflow-hidden rounded-full bg-gray-100"
