@@ -1,0 +1,11 @@
+{
+  "appId": "co.growth4u.businesscard",
+  "appName": "Growth4u Connect",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Growth4u Connect</string>
+    <string name="title_activity_main">Growth4u Connect</string>
+    <string name="package_name">co.growth4u.businesscard</string>
+    <string name="custom_url_scheme">co.growth4u.businesscard</string>
+</resources>

@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-export default defineConfig({
+// GitHub Pages uses /business-card/; Capacitor / local preview use /
+const base = process.env.VITE_BASE ?? (process.env.CAPACITOR === '1' ? '/' : undefined)
+
+export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: process.env.NODE_ENV === 'production' ? '/business-card/' : '/',
-})
+  base: base ?? (command === 'build' ? '/business-card/' : '/'),
+}))

@@ -1,150 +1,106 @@
 # Mobile Business Card Web App
 
-A beautiful, mobile-first web application that displays your business card with a QR code. People can scan the QR code to instantly add your contact information to their phone.
+A mobile-first web app that displays a digital business card with a scannable vCard QR code.
 
 ## Features
 
-✨ **Mobile-First Design** - Optimized for viewing on smartphones  
-📱 **Responsive Layout** - Works seamlessly on all screen sizes  
-🎨 **Professional Styling** - Built with Tailwind CSS for a modern look  
-📲 **QR Code Generator** - Automatically generates a vCard QR code with all your contact info  
-⚡ **Fast & Lightweight** - Built with React and Vite for optimal performance  
-📧 **Contact Links** - Click on email, phone, or website for direct actions  
+- Mobile-first full-screen layout
+- Editable contact fields with localStorage persistence
+- vCard QR code (tap to expand)
+- Copy, download (.vcf), and share actions
+- Splash screen
+- Built with React 19, Vite, and Tailwind CSS
 
 ## Customization
 
-Edit [src/App.jsx](src/App.jsx) to update your information:
+Edit [src/constants/defaultCard.js](src/constants/defaultCard.js):
 
 ```javascript
-const [cardInfo] = useState({
+export const DEFAULT_CARD = {
   name: 'Your Name',
   title: 'Your Title',
   email: 'your.email@example.com',
   phone: '+1 (555) 123-4567',
   website: 'https://yourwebsite.com',
-  profileColor: '#3B82F6', // Change to your preferred color
-});
+  profileColor: '#0A84FF',
+};
 ```
 
-## Setup & Installation
+## Setup
 
-### Prerequisites
-- Node.js (v16 or higher with npm)
-  - [Download Node.js](https://nodejs.org/)
+Prerequisites: Node.js 20+ and npm.
 
-### Installation Steps
+```bash
+cd business-card
+npm install
+npm run dev
+```
 
-1. **Navigate to the project directory:**
-   ```bash
-   cd ~/Documents/AI-BC
-   ```
+App runs at `http://localhost:5173`.
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Customize your business card:**
-   - Open [src/App.jsx](src/App.jsx)
-   - Update the `cardInfo` object with your personal information
-   - Choose your preferred `profileColor` (use any hex color code)
-
-4. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-   
-   The app will be available at `http://localhost:5173`
-
-## Building for Production
-
-To create an optimized production build:
+## Build
 
 ```bash
 npm run build
-```
-
-The build files will be generated in the `dist/` folder.
-
-To preview the production build locally:
-
-```bash
 npm run preview
 ```
 
-## Deployment Options
-
-### Option 1: GitHub Pages (Free)
-1. Create a repository on GitHub
-2. Push your code to the repository
-3. Configure GitHub Pages in repo settings to deploy from `dist/` folder
-4. Your site will be available at `https://yourusername.github.io/repository-name`
-
-### Option 2: Netlify (Free)
-1. Connect your GitHub repository to Netlify
-2. Set build command to `npm run build`
-3. Set publish directory to `dist`
-4. Your site will be auto-deployed
-
-### Option 3: Vercel (Free)
-1. Import your project to Vercel
-2. It will automatically detect it's a Vite React app
-3. Your site will be live at your custom domain
-
-## How QR Code Works
-
-The QR code encodes your contact information in vCard format (v3.0), which is the international standard for digital business cards. When someone scans the QR code with their phone camera or a QR code reader:
-
-- **iOS**: Opens a prompt to save contact
-- **Android**: Opens a prompt to save contact
-- **Desktop**: Can be decoded to see contact info
+Production output is written to `dist/`. On GitHub Pages the base path is `/business-card/`.
 
 ## Project Structure
 
 ```
-├── src/
-│   ├── App.jsx          # Main component with business card
-│   ├── App.css          # Component styles
-│   ├── main.jsx         # React entry point
-│   └── index.css        # Global styles with Tailwind
-├── index.html           # HTML template
-├── package.json         # Dependencies and scripts
-├── vite.config.js       # Vite configuration
-├── tailwind.config.js   # Tailwind CSS configuration
-├── postcss.config.js    # PostCSS configuration
-└── .gitignore          # Git ignore rules
+src/
+  App.jsx
+  main.jsx
+  index.css
+  constants/defaultCard.js
+  hooks/useBusinessCard.js
+  utils/vcard.js
+  components/
+    SplashScreen.jsx
+    QRModal.jsx
+    ActionBar.jsx
+    ContactFields.jsx
 ```
 
-## Technologies Used
+## Technologies
 
-- **React 18** - UI library
-- **Vite** - Fast build tool and dev server
-- **Tailwind CSS** - Utility-first CSS framework
-- **QR Code React** - QR code generation library
+- React 19
+- Vite 6
+- Tailwind CSS 3
+- qrcode.react
+- lucide-react
 
-## Troubleshooting
+## How the QR Code Works
 
-### npm install fails
-- Make sure Node.js is installed: `node --version`
-- Try clearing npm cache: `npm cache clean --force`
-- Delete `node_modules` and `package-lock.json`, then run `npm install` again
+The QR encodes a vCard 3.0 payload. Scanning with a phone camera usually prompts saving the contact on iOS and Android.
 
-### Port 5173 is already in use
-- The dev server will automatically try the next available port
-- Alternatively, specify a different port: `npm run dev -- --port 3000`
+## Android APK
 
-### QR Code not displaying
-- Make sure all dependencies are installed: `npm install`
-- Clear browser cache and refresh
-- Check browser console for any errors
+This project includes a Capacitor Android wrapper.
+
+**This Mac cannot build the APK locally** (no Java / Android SDK). Use one of these:
+
+### Option A — GitHub Actions (recommended)
+
+1. Push these changes to GitHub.
+2. Open the repo → **Actions** → **Build Android APK** → **Run workflow**.
+3. When it finishes, download the **growth4u-connect-debug** artifact (contains `app-debug.apk`).
+4. Copy the APK to your phone and open it to install (enable “Install unknown apps” if asked).
+
+### Option B — Android Studio on your computer
+
+1. Install [Android Studio](https://developer.android.com/studio).
+2. Run:
+
+```bash
+npm run cap:sync
+npm run cap:open
+```
+
+3. In Android Studio: **Build → Build Bundle(s) / APK(s) → Build APK(s)**.
 
 ## License
 
-This project is open source and available under the MIT License.
-
-## Support
-
-For issues or questions, refer to:
-- [Vite Documentation](https://vitejs.dev/)
-- [React Documentation](https://react.dev/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/)
+MIT
